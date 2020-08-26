@@ -1,19 +1,29 @@
-use crate::matrix::Matrix3;
+#[cfg(feature = "serde-serialize")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use super::{Point, Projective, Vector};
+use nalgebra::base::helper;
+
+use rand::{
+  distributions::{Distribution, Standard},
+  Rng,
+};
+
+use crate::matrix::RealField;
+
+use super::{HomogeneousMatrix, Point, Projective, Vector};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Orthographic<N: nalgebra::RealField>
+pub struct Orthographic<N: RealField>
 {
-  matrix: Matrix3<N>,
+  matrix: HomogeneousMatrix<N>,
 }
 
-impl<N: nalgebra::RealField> Orthographic<N>
+impl<N: RealField> Orthographic<N>
 {
   #[inline]
   pub fn new(left: N, right: N, bottom: N, top: N) -> Self
   {
-    let matrix = Matrix3::<N>::identity();
+    let matrix = HomogeneousMatrix::<N>::identity();
     let mut res = Self::from_matrix_unchecked(matrix);
     res.set_left_and_right(left, right);
     res.set_bottom_and_top(bottom, top);
@@ -21,13 +31,13 @@ impl<N: nalgebra::RealField> Orthographic<N>
   }
 
   #[inline]
-  pub fn from_matrix_unchecked(matrix: Matrix3<N>) -> Self
+  pub fn from_matrix_unchecked(matrix: HomogeneousMatrix<N>) -> Self
   {
     Self { matrix }
   }
 
   #[inline]
-  pub fn inverse(&self) -> Matrix3<N>
+  pub fn inverse(&self) -> HomogeneousMatrix<N>
   {
     let mut res = self.to_homogeneous();
 
@@ -43,13 +53,13 @@ impl<N: nalgebra::RealField> Orthographic<N>
   }
 
   #[inline]
-  pub fn to_homogeneous(&self) -> Matrix3<N>
+  pub fn to_homogeneous(&self) -> HomogeneousMatrix<N>
   {
     self.matrix
   }
 
   #[inline]
-  pub fn as_matrix(&self) -> &Matrix3<N>
+  pub fn as_matrix(&self) -> &HomogeneousMatrix<N>
   {
     &self.matrix
   }
@@ -67,7 +77,7 @@ impl<N: nalgebra::RealField> Orthographic<N>
   }
 
   #[inline]
-  pub fn into_inner(self) -> Matrix3<N>
+  pub fn into_inner(self) -> HomogeneousMatrix<N>
   {
     self.matrix
   }
@@ -168,5 +178,52 @@ impl<N: nalgebra::RealField> Orthographic<N>
     );
     self.matrix[(1, 1)] = nalgebra::convert::<_, N>(2.0) / (top - bottom);
     self.matrix[(1, 2)] = -(top + bottom) / (top - bottom);
+  }
+}
+
+#[cfg(feature = "serde-serialize")]
+impl<N: RealField + Serialize> Serialize for Orthographic<N>
+{
+  fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+  where
+    S: Serializer,
+  {
+    self.matrix.serialize(serializer)
+  }
+}
+
+#[cfg(feature = "serde-serialize")]
+impl<'a, N: RealField + Deserialize<'a>> Deserialize<'a> for Orthographic<N>
+{
+  fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
+  where
+    Des: Deserializer<'a>,
+  {
+    let matrix = HomogeneousMatrix::<N>::deserialize(deserializer)?;
+    Ok(Self::from_matrix_unchecked(matrix))
+  }
+}
+
+impl<N: RealField> Distribution<Orthographic<N>> for Standard
+where
+  Standard: Distribution<N>,
+{
+  fn sample<R: Rng + ?Sized>(&self, r: &mut R) -> Orthographic<N>
+  {
+    let left = r.gen();
+    let right = helper::reject_rand(r, |x: &N| *x > left);
+    let bottom = r.gen();
+    let top = helper::reject_rand(r, |x: &N| *x > bottom);
+
+    Orthographic::new(left, right, bottom, top)
+  }
+}
+
+impl<N: RealField> From<Orthographic<N>> for HomogeneousMatrix<N>
+{
+  #[inline]
+  fn from(orth: Orthographic<N>) -> Self
+  {
+    orth.into_inner()
   }
 }

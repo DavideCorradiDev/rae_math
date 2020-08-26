@@ -1,5 +1,3 @@
-extern crate nalgebra;
-
 use nalgebra::geometry;
 
 pub use geometry::{
