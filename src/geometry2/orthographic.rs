@@ -1,14 +1,14 @@
 #[cfg(feature = "serde-serialize")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use nalgebra::{base::helper, convert};
+use nalgebra::base::helper;
 
 use rand::{
     distributions::{Distribution, Standard},
     Rng,
 };
 
-use crate::matrix::RealField;
+use crate::{conversion::convert, matrix::RealField};
 
 use super::{HomogeneousMatrix, Point, Projective, Vector};
 

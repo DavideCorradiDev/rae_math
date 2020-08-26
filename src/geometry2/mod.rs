@@ -11,6 +11,3 @@ pub use crate::matrix::{Matrix3 as HomogeneousMatrix, Vector2 as Vector};
 
 mod orthographic;
 pub use orthographic::OrthographicProjection;
-
-mod to_homogeneous3;
-pub use to_homogeneous3::*;

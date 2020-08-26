@@ -1,17 +1,11 @@
-use super::HomogeneousMatrix;
-use crate::{geometry3, matrix::RealField};
-
-use super::{
-    Affine, Isometry, OrthographicProjection, Projective, Rotation, Similarity, Transform,
-    Translation,
-};
+use crate::{geometry2, geometry3, matrix::RealField};
 
 pub trait ToHomogeneous3<N: RealField> {
     fn to_homogeneous3(&self) -> geometry3::HomogeneousMatrix<N>;
 }
 
 fn homogeneous2_to_homogeneous3<N: RealField>(
-    m2: HomogeneousMatrix<N>,
+    m2: geometry2::HomogeneousMatrix<N>,
 ) -> geometry3::HomogeneousMatrix<N> {
     let mut out = geometry3::HomogeneousMatrix::<N>::identity();
     out[(0, 0)] = m2[(0, 0)];
@@ -33,11 +27,11 @@ macro_rules! implement_to_homogeneous3 {
     };
 }
 
-implement_to_homogeneous3!(Affine<N>);
-implement_to_homogeneous3!(Isometry<N>);
-implement_to_homogeneous3!(Projective<N>);
-implement_to_homogeneous3!(Rotation<N>);
-implement_to_homogeneous3!(Similarity<N>);
-implement_to_homogeneous3!(Transform<N>);
-implement_to_homogeneous3!(Translation<N>);
-implement_to_homogeneous3!(OrthographicProjection<N>);
+implement_to_homogeneous3!(geometry2::Affine<N>);
+implement_to_homogeneous3!(geometry2::Isometry<N>);
+implement_to_homogeneous3!(geometry2::Projective<N>);
+implement_to_homogeneous3!(geometry2::Rotation<N>);
+implement_to_homogeneous3!(geometry2::Similarity<N>);
+implement_to_homogeneous3!(geometry2::Transform<N>);
+implement_to_homogeneous3!(geometry2::Translation<N>);
+implement_to_homogeneous3!(geometry2::OrthographicProjection<N>);
