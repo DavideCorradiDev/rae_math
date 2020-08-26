@@ -1,7 +1,7 @@
 #[cfg(feature = "serde-serialize")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use nalgebra::base::helper;
+use nalgebra::{base::helper, convert};
 
 use rand::{
   distributions::{Distribution, Standard},
@@ -165,7 +165,7 @@ impl<N: RealField> Orthographic<N>
       left != right,
       "The left corner must not be equal to the right corner."
     );
-    self.matrix[(0, 0)] = nalgebra::convert::<_, N>(2.0) / (right - left);
+    self.matrix[(0, 0)] = convert::<_, N>(2.0) / (right - left);
     self.matrix[(0, 2)] = -(right + left) / (right - left);
   }
 
@@ -176,7 +176,7 @@ impl<N: RealField> Orthographic<N>
       bottom != top,
       "The top corner must not be equal to the bottom corner."
     );
-    self.matrix[(1, 1)] = nalgebra::convert::<_, N>(2.0) / (top - bottom);
+    self.matrix[(1, 1)] = convert::<_, N>(2.0) / (top - bottom);
     self.matrix[(1, 2)] = -(top + bottom) / (top - bottom);
   }
 }
