@@ -13,12 +13,12 @@ use crate::matrix::RealField;
 use super::{HomogeneousMatrix, Point, Projective, Vector};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Orthographic<N: RealField>
+pub struct OrthographicProjection<N: RealField>
 {
   matrix: HomogeneousMatrix<N>,
 }
 
-impl<N: RealField> Orthographic<N>
+impl<N: RealField> OrthographicProjection<N>
 {
   #[inline]
   pub fn new(left: N, right: N, bottom: N, top: N) -> Self
@@ -182,7 +182,7 @@ impl<N: RealField> Orthographic<N>
 }
 
 #[cfg(feature = "serde-serialize")]
-impl<N: RealField + Serialize> Serialize for Orthographic<N>
+impl<N: RealField + Serialize> Serialize for OrthographicProjection<N>
 {
   fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
   where
@@ -193,7 +193,8 @@ impl<N: RealField + Serialize> Serialize for Orthographic<N>
 }
 
 #[cfg(feature = "serde-serialize")]
-impl<'a, N: RealField + Deserialize<'a>> Deserialize<'a> for Orthographic<N>
+impl<'a, N: RealField + Deserialize<'a>> Deserialize<'a>
+  for OrthographicProjection<N>
 {
   fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
   where
@@ -204,25 +205,25 @@ impl<'a, N: RealField + Deserialize<'a>> Deserialize<'a> for Orthographic<N>
   }
 }
 
-impl<N: RealField> Distribution<Orthographic<N>> for Standard
+impl<N: RealField> Distribution<OrthographicProjection<N>> for Standard
 where
   Standard: Distribution<N>,
 {
-  fn sample<R: Rng + ?Sized>(&self, r: &mut R) -> Orthographic<N>
+  fn sample<R: Rng + ?Sized>(&self, r: &mut R) -> OrthographicProjection<N>
   {
     let left = r.gen();
     let right = helper::reject_rand(r, |x: &N| *x > left);
     let bottom = r.gen();
     let top = helper::reject_rand(r, |x: &N| *x > bottom);
 
-    Orthographic::new(left, right, bottom, top)
+    OrthographicProjection::new(left, right, bottom, top)
   }
 }
 
-impl<N: RealField> From<Orthographic<N>> for HomogeneousMatrix<N>
+impl<N: RealField> From<OrthographicProjection<N>> for HomogeneousMatrix<N>
 {
   #[inline]
-  fn from(orth: Orthographic<N>) -> Self
+  fn from(orth: OrthographicProjection<N>) -> Self
   {
     orth.into_inner()
   }
