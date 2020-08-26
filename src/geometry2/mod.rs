@@ -9,5 +9,7 @@ pub use geometry::{
   Transform2 as Transform, Translation2 as Translation, UnitComplex,
 };
 
+pub use crate::matrix::{Matrix3 as HomogeneousMatrix, Vector2 as Vector};
+
 mod orthographic;
 pub use orthographic::Orthographic;

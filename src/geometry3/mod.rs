@@ -10,3 +10,5 @@ pub use geometry::{
   SimilarityMatrix3 as SimilarityMatrix, Transform3 as Transform,
   Translation3 as Translation, UnitQuaternion,
 };
+
+pub use crate::matrix::{Matrix4 as HomogeneousMatrix, Vector3 as Vector};
