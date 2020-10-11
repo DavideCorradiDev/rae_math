@@ -8,4 +8,6 @@ pub use geometry::{
     UnitQuaternion,
 };
 
-pub use crate::matrix::{Matrix4 as HomogeneousMatrix, Vector3 as Vector};
+pub use crate::matrix::{
+    Matrix4 as HomogeneousMatrix, Vector3 as Vector, Vector4 as HomogeneousVector,
+};

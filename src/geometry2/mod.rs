@@ -7,7 +7,9 @@ pub use geometry::{
     UnitComplex,
 };
 
-pub use crate::matrix::{Matrix3 as HomogeneousMatrix, Vector2 as Vector};
+pub use crate::matrix::{
+    Matrix3 as HomogeneousMatrix, Vector2 as Vector, Vector3 as HomogeneousVector,
+};
 
 mod orthographic;
 pub use orthographic::OrthographicProjection;
